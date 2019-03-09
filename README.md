@@ -1,4 +1,4 @@
-#Annotations Comparator
+# Annotations Comparator
 
 This app is used to compare text annotation on a given manuscript.
 There are two main tools used for annotations comparison.
