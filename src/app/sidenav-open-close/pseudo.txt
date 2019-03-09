@@ -1,0 +1,16 @@
+init the new diffsJson
+for each chapter:
+    for each page in chapter:
+        for each version in page:
+            get version annotation layer
+            for each textboxnote1 in annotation layer of this version:
+                for each version from version + 1 to end in page:
+                    for each textboxnote2 in annotaion layer of this version:
+                        if isSameAnnotation(t1, t2)
+                            unifiedNote = t1.note + "\n-----\n" + t2.note
+                            if (!diffsJson[chap].pages[page].version[0].annotationLayer)
+                                diffsJson[chap].pages[page].version[0].annotationLayer = new Array<TextBoxNote>()
+                            diffsJson[chap].pages[page].version[0].annotationLayer.push(
+                                new TextBoxNote(t1.startPoint, t1.height, t1.width, unifiedNote)
+
+                

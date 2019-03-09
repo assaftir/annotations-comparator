@@ -1,0 +1,65 @@
+<html>
+<body>
+
+<pre id="display"></pre>
+<script src="diff.js"></script>
+<script>
+
+import { Manuscript } from "../src/app/models/manuscript";
+import { ImagePage, TextboxNote } from "../src/app/models/image-page";
+var color = '',
+    span = null;
+
+var json = require("C:\\Users\\Assaf\\Documents\\tiip191\\ngx-manusctipts-viewer\\src\\api\\manuscripts.json");
+
+const xDelta = 30;
+const yDelta = 30;
+const chapter_1 : Manuscript = json[0];
+let firstPageOfChapter : ImagePage = chapter_1.pages[0];
+let fourthPageOfChapter : ImagePage = chapter_1.pages[3];
+
+comaprePageAnnotations(firstPageOfChapter, fourthPageOfChapter, 1);
+
+function comaprePageAnnotations(firstPage : ImagePage, secondPage : ImagePage, version : number) {
+    let firstPageAnnotationLayers : TextboxNote[] = firstPage.version[version].annotationLayer;
+    let secondPageAnnotationLayers : TextboxNote[] = secondPage.version[version].annotationLayer;
+    if(firstPageAnnotationLayers == undefined || secondPageAnnotationLayers == undefined){
+        return null;
+    }
+    for (let i = 0 ; i < firstPageAnnotationLayers.length ; i++) {
+        for(let j = 0 ; j < secondPageAnnotationLayers.length ; j ++){
+            if(!isSameAnnotation(firstPageAnnotationLayers[i], secondPageAnnotationLayers[j])){
+                continue;
+            }
+            /* We have a possible match, proccess it by diff and keep the result, where? */
+            console.log("----Annotation----");           
+            var diff = JsDiff.diffChars(firstPageAnnotationLayers[i].textNote, secondPageAnnotationLayers[j].textNote),
+            display = document.getElementById('display'),
+            fragment = document.createDocumentFragment();
+            diff.forEach(function(part){
+            // green for additions, red for deletions
+            // grey for common parts
+            color = part.added ? 'green' :
+                part.removed ? 'red' : 'grey';
+            span = document.createElement('span');
+            span.style.color = color;
+            span.appendChild(document
+                .createTextNode(part.value));
+            fragment.appendChild(span);
+            });
+
+            display.appendChild(fragment);
+        }
+    }
+}
+
+function isSameAnnotation(firstTextBox : TextboxNote, secondTextBox : TextboxNote) {
+    let firstStartPoint = firstTextBox.startPoint;
+    let secondStartPoint = secondTextBox.startPoint;
+    return (Math.abs(firstStartPoint.x - secondStartPoint.x) < xDelta &&
+            Math.abs(firstStartPoint.y - secondStartPoint.y) < yDelta)
+}    
+</script>
+</body>
+</html> 
+/* (0,0) is at top left */
