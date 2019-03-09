@@ -27,7 +27,13 @@
               "height": 60,
               "width": 200,
               "textNote": "single annotation"
-             }
+             },
+             {
+              "startPoint": {"x":450,"y":600},
+              "height": 50,
+              "width": 500,
+              "textNote": "My name is Jihad"
+            }
             ],
             "polygonLayer":[
             ],
@@ -40,7 +46,7 @@
                 "startPoint": {"x":450,"y":600},
                 "height": 50,
                 "width": 500,
-                "textNote": "Hello World"
+                "textNote": "My name is Assaf"
               },
               {
               "startPoint": {"x":400,"y":800},
@@ -60,7 +66,7 @@
                 "startPoint": {"x":450,"y":600},
                 "height": 50,
                 "width": 500,
-                "textNote": "Ballo word"
+                "textNote": "My name is Si"
               }
             ],
             "polygonLayer":[

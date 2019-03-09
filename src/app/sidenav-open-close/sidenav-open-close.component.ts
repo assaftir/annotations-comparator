@@ -102,7 +102,7 @@ export class SidenavOpenCloseComponent implements OnInit {
           if(versionTextNotes == undefined)
             continue;
           for(let t1 = 0 ; t1 < versionTextNotes.length ; t1++){ //caught first textbox
-            unifiedNote = ' Annotator (' + v1 + ') - ' + versionTextNotes[t1].textNote + ' ----- ';
+            unifiedNote = 'Annotator (' + v1 + ') - ' + versionTextNotes[t1].textNote + ' ----- ';
             for(let v2 = v1 + 1 ; v2 < pageVersions.length ; v2++){ //next verions loop
               if(pageVersions[v2] == undefined)
                 continue;

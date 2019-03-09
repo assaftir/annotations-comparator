@@ -372,17 +372,18 @@ export class Drawer {
     let nextX = x;
     let nextY = y + lineHeight;
     var lastColor;
-    var space : number = 0;
+    var space = 0;
     for(let i = 0 ; i < result.length; i++){
       ctx.fillStyle = this.getPartColor(result[i]);
       console.log("fillstyle: " + ctx.fillStyle + ", lastColor: " + lastColor);
-      if(lastColor != undefined && ( lastColor != ctx.fillStyle )){
+      if(lastColor != undefined && (lastColor == 'green' && (this.getPartColor(result[i]) == 'red') || this.getPartColor(result[i]) == 'black') || (lastColor == 'red' && this.getPartColor(result[i]) == 'green')){
         space = ctx.measureText(" ").width;
+        console.log("GOT IT");
       } else {
         space = 0;
       }
-      if(ctx.measureText(result[i].value).width > backRectWidth){
-        var lines = this.splitLongString(ctx, result[i].value)
+      if(ctx.measureText(result[i].value).width > backRectWidth + 100){
+        var lines = this.splitLongString(ctx, result[i].value);
         for(let i = 0 ; i < lines.length ; i++){
           ctx.fillText(lines[i], nextX + space, nextY);
           nextX = x;
@@ -400,7 +401,7 @@ export class Drawer {
           nextY += lineHeight;
         }
       }
-      lastColor = ctx.fillStyle;
+      lastColor = this.getPartColor(result[i]);
     }
   }
 
