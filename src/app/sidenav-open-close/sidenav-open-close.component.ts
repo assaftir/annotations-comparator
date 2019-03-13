@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ManuscriptService } from '../services/services.imageService';
 import { error } from 'util';
 import { Manuscript } from '../models/manuscript';
-import { ImagePage, TextboxNote, ImageLayers } from '../models/image-page';
+import { ImagePage, TextboxNote, ImageLayers, Pixel } from '../models/image-page';
 import { version } from 'punycode';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import * as myGlobals from '../../../src/globals';
@@ -57,9 +57,9 @@ export class SidenavOpenCloseComponent implements OnInit {
   }  
 
   public initJson(originalJson : Manuscript[]){
-    console.log(originalJson[0].title);
+/*     console.log(originalJson[0].title);
     console.log(originalJson[1].title);
-    console.log("length: " + originalJson.length);
+    console.log("length: " + originalJson.length); */
     this.diffsJson = new Array<Manuscript>(originalJson.length);
     for(let i = 0 ; i < this.diffsJson.length ; i++){
       this.diffsJson[i] = new Manuscript();
@@ -87,13 +87,12 @@ export class SidenavOpenCloseComponent implements OnInit {
 
   public comapreAll(originalJson : Manuscript[]){
     this.initJson(originalJson);
-    console.log('hey!');
     let unifiedNote = '';
     //Chapters loop
     for (let chap = 0; chap < originalJson.length; chap++) {
       let chapterPages : ImagePage[] = originalJson[chap].pages;
       for(let page = 0 ; page < chapterPages.length ; page++){
-        console.log(chapterPages[page].imageUrl);
+/*         console.log(chapterPages[page].imageUrl); */
         let pageVersions : ImageLayers[] = chapterPages[page].version;
         for(let v1 = 0 ; v1 < pageVersions.length ; v1++){
           if(pageVersions[v1] == undefined)
@@ -102,35 +101,97 @@ export class SidenavOpenCloseComponent implements OnInit {
           if(versionTextNotes == undefined)
             continue;
           for(let t1 = 0 ; t1 < versionTextNotes.length ; t1++){ //caught first textbox
-            unifiedNote = 'Annotator (' + v1 + ') - ' + versionTextNotes[t1].textNote + ' ----- ';
+            unifiedNote = /* 'Annotator (' + v1 + ') - ' +  */versionTextNotes[t1].textNote + ' ----- ';
             for(let v2 = v1 + 1 ; v2 < pageVersions.length ; v2++){ //next verions loop
               if(pageVersions[v2] == undefined)
                 continue;
               let secondVersionTextNotes : TextboxNote[] = pageVersions[v2].annotationLayer;
               for(let t2 = 0 ; t2 < secondVersionTextNotes.length ; t2++){ //next version textNotes loop
                 if (this.isSameAnnotation(versionTextNotes[t1], secondVersionTextNotes[t2])){
-                  console.log('match!');
+/*                   console.log('match!');
                   console.log(versionTextNotes[t1].textNote);
-                  console.log(secondVersionTextNotes[t2].textNote);
-                  unifiedNote += 'Annotator (' + v2 + ') - ' + secondVersionTextNotes[t2].textNote + ' ----- ';
+                  console.log(secondVersionTextNotes[t2].textNote); */
+                  unifiedNote += /* 'Annotator (' + v2 + ') - ' +  */secondVersionTextNotes[t2].textNote + ' ----- ';
                 }
               }
             }
             if(!this.diffsJson[chap].pages[page].version[0].annotationLayer){
               this.diffsJson[chap].pages[page].version[0].annotationLayer = new Array<TextboxNote>(1000);
             }
-            this.diffsJson[chap].pages[page].version[0].annotationLayer.push(
-              new TextboxNote(versionTextNotes[t1].startPoint,
-                              versionTextNotes[t1].height,
-                              versionTextNotes[t1].width,
-                              unifiedNote));
+            if(!this.alreadyContains(this.diffsJson[chap].pages[page].version[0].annotationLayer, versionTextNotes[t1].startPoint, versionTextNotes[t1].height, versionTextNotes[t1].width)){
+              this.diffsJson[chap].pages[page].version[0].annotationLayer.push(
+                new TextboxNote(versionTextNotes[t1].startPoint,
+                                versionTextNotes[t1].height,
+                                versionTextNotes[t1].width,
+                                unifiedNote));
+              /* console.log('unified: ' + unifiedNote); */
+            }
           }
         }
       }
     }
+
+
+    for (let chap = 0; chap < this.diffsJson.length; chap++) {
+      let chapterPages : ImagePage[] = this.diffsJson[chap].pages;
+      for(let page = 0 ; page < chapterPages.length ; page++){
+        let pageVersions : ImageLayers[] = chapterPages[page].version;
+        for(let v1 = 0 ; v1 < pageVersions.length ; v1++){
+          if(pageVersions[v1] == undefined)
+            continue;
+          let versionTextNotes : TextboxNote[] = pageVersions[v1].annotationLayer;
+          if(versionTextNotes == undefined)
+            continue;
+          for(let t1 = 0 ; t1 < versionTextNotes.length ; t1++){ //caught first textbox
+            var splitted = versionTextNotes[t1].textNote.split("-----");
+            var annotationsList = [];
+            for(let i = 0 ; i < splitted.length ; i++){
+              if(splitted[i].trim() != ""){
+                annotationsList.push(splitted[i].trim());
+              }
+            }
+            for(let i = 0 ; i < annotationsList.length ; i++){
+              annotationsList[i] = annotationsList[i].trim();
+            }
+            var annotationsMap = {};
+            for(let i = 0 ; i < annotationsList.length ; i++){
+              var v = annotationsMap[annotationsList[i]];
+              if(v != undefined){
+                annotationsMap[annotationsList[i]] = v + 1;
+              } else {
+                annotationsMap[annotationsList[i]] = 1;
+              }
+            }
+            var s : string = "";
+            for(var key in annotationsMap){
+              var curr : string = "";
+              curr = "[" + String(annotationsMap[key]) + "] Annotator(s) - ";
+              curr += String(key);
+              s += (curr + ' ----- ');
+            }
+            versionTextNotes[t1].textNote = s;
+          }
+        }
+      }
+    }
+
+
+
     this.profileManuscripts = this.diffsJson;
-    //console.log(JSON.stringify(this.diffsJson));
+    /* console.log(JSON.stringify(this.diffsJson)); */
   }
+
+alreadyContains(textBoxes : TextboxNote[], sp : Pixel, height : number, width : number){
+  for(let i = 0 ; i < textBoxes.length ; i++){
+    if(textBoxes[i].startPoint.x == sp.x &&
+       textBoxes[i].startPoint.y == sp.y &&
+       textBoxes[i].height == height &&
+       textBoxes[i].width == width){
+         return true;
+       }
+  }
+  return false;
+}
 
 compareDiff(originalJson : Manuscript[]) {
     this.initJson(originalJson);
@@ -161,7 +222,6 @@ compareDiff(originalJson : Manuscript[]) {
                                                                                                               firstVersionPageAnnotations[i].height,
                                                                                                               firstVersionPageAnnotations[i].width,
                                                                                                               unifiedNote));
-            console.log('pushed');
         }
         if(!foundMatch){
           this.diffsJson[this.chapterNum].pages[this.pageNum].version[0].annotationLayer.push(
@@ -172,7 +232,6 @@ compareDiff(originalJson : Manuscript[]) {
         }
     }
     this.profileManuscripts = this.diffsJson;
-    console.log(JSON.stringify(this.profileManuscripts));
 }
   //#region
 

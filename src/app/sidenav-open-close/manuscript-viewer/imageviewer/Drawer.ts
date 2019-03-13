@@ -92,11 +92,16 @@ export class Drawer {
     // preserve context
     ctx.save();
 
-    ctx.globalAlpha = 0.3;
+    ctx.globalAlpha = 0.5;
     annotationLayer.forEach(textboxNote => {
         ctx.beginPath();
         ctx.lineWidth = '1';
-        ctx.fillStyle = 'blue';
+        /* console.log('note: ' + textboxNote.textNote); */
+        if(myGlobals.compareMode){
+          ctx.fillStyle = this.getColorForTextbox(textboxNote);
+        } else{
+          ctx.fillStyle = 'blue';
+        }
         ctx.strokeStyle = 'black';
         ctx.rect(startX + textboxNote.startPoint.x, startY + textboxNote.startPoint.y, textboxNote.width, textboxNote.height);
         ctx.stroke();
@@ -104,6 +109,66 @@ export class Drawer {
     });
      // restore context
      ctx.restore();
+  }
+
+  static getColorForTextbox(textboxNote : TextboxNote){
+    var textNote : string = textboxNote.textNote;
+    var nums = textNote.split(/\W/).filter(i => parseInt(i) > -1).map(Number);
+    var max : number = this.findMax(nums);
+    var sum : number = this.arraySum(nums);
+    var color : string = this.getColorByValue(max, sum)
+    return color;
+  }
+
+  static findMax(arr : Number[]){
+    var max : Number = arr[0];
+    for(let i = 0 ; i < arr.length ; i++){
+      if(arr[i] > max)
+        max = arr[i];
+    }
+    return max;
+  }
+
+  static arraySum(arr : Number[]){
+    var sum : Number = 0;
+    for (let i = 0 ; i < arr.length ; i++){
+      sum += arr[i];
+    }
+    return sum;
+  }
+
+  static getColorByValue(max : number, sum : number){
+    const val = max / sum;
+    if(sum == 1){
+      return 'blue';
+    }
+    if(val == 1){
+      return 'green';
+    } else if(sum == 2){
+      if(val == 1){
+        return 'green'; 
+      } else {
+        return 'red';
+      }
+    } else {
+      switch(true){
+        case(val > 0 && val <= 0.2):
+          return 'red';
+
+        case(val > 0.2 && val <= 0.4):
+          return 'salmon';
+        
+        case(val > 0.4 && val <= 0.6):
+          return 'orange';
+        
+        case(val > 0.6 && val <= 0.8):
+          return 'yellow';
+        
+        case(val > 0.8 && val < 1):
+          return 'mediumspringgreen';
+        
+      }
+    }
   }
 
   static drawPolygonsLayer(ctx, polygonLayer: Polygon[], startX: number , startY: number) {
@@ -190,12 +255,12 @@ export class Drawer {
   static drawTextBoxBolder(ctx, textboxNote: TextboxNote, startX: number , startY: number) {
       // preserve context
       ctx.save();
-      ctx.globalAlpha = 0.4;
+      ctx.globalAlpha = 0.2;
 
       ctx.beginPath();
       ctx.lineWidth = '1';
-      ctx.fillStyle = 'blue';
-      ctx.strokeStyle = 'red';
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'black';
       ctx.rect(startX + textboxNote.startPoint.x, startY + textboxNote.startPoint.y, textboxNote.width, textboxNote.height);
       ctx.stroke();
       ctx.fill();
@@ -284,7 +349,9 @@ export class Drawer {
       const metrics = ctx.measureText(testLine);
       const testWidth = metrics.width;
       if ((testWidth > maxWidth && n > 0) || words[n] == '-----') {
-        LINES.push(line);
+        if(true || !LINES.includes(line)){
+          LINES.push(line);
+        }
         if(words[n] == '-----')
           line = '';
         else
@@ -294,7 +361,9 @@ export class Drawer {
         line = testLine;
       }
     }
-    LINES.push(line);
+    if(true || !LINES.includes(line)){
+      LINES.push(line);
+    }
 
 
     // deal when the box is over the edges of the canvas
@@ -366,8 +435,8 @@ export class Drawer {
     ctx.fill();
     ctx.restore();
     // draw lines
-    console.log('words[0]: ' + LINES[0]);
-    console.log('words[1]: ' + LINES[1]);
+/*     console.log('words[0]: ' + LINES[0]);
+    console.log('words[1]: ' + LINES[1]); */
     let result = Diff.diffWords(LINES[0], LINES[1]);
     let nextX = x;
     let nextY = y + lineHeight;
@@ -375,10 +444,10 @@ export class Drawer {
     var space = 0;
     for(let i = 0 ; i < result.length; i++){
       ctx.fillStyle = this.getPartColor(result[i]);
-      console.log("fillstyle: " + ctx.fillStyle + ", lastColor: " + lastColor);
+/*       console.log("fillstyle: " + ctx.fillStyle + ", lastColor: " + lastColor); */
       if(lastColor != undefined && (lastColor == 'green' && (this.getPartColor(result[i]) == 'red') || this.getPartColor(result[i]) == 'black') || (lastColor == 'red' && this.getPartColor(result[i]) == 'green')){
         space = ctx.measureText(" ").width;
-        console.log("GOT IT");
+/*         console.log("GOT IT"); */
       } else {
         space = 0;
       }
@@ -391,10 +460,10 @@ export class Drawer {
         }
       } else {
         ctx.fillText(result[i].value, nextX + space, nextY);
-        console.log("space: " + space);
+/*         console.log("space: " + space);
         console.log('part value: ' + result[i].value);
         console.log('next X: ' + nextX);
-        console.log('-----');
+        console.log('-----'); */
         nextX += (ctx.measureText(result[i].value).width);
         if(nextX - x > backRectWidth){
           nextX = x;
