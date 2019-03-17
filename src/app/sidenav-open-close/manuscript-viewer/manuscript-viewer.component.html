@@ -1,3 +1,4 @@
+<div class="manuscript-container">
 <h3 style="margin: 0%">Annotator</h3>
 <!-- <div class="canvasForm" style="padding:0%"> //option for upload
     <div>
@@ -5,7 +6,6 @@
       <input  (change)="handleInputChange($event)" type="file" accept="image/*,application/pdf" required multiple>
     </div>
 </div> -->
-<h4 style="margin: 1%" *ngIf=manuscript>Current Manuscript: {{manuscript.title}}</h4>
 
 <div class="flex-container">
     <div #imagewrapper class="imagewrapper">
@@ -21,4 +21,4 @@
                   (versionChange) ='onVersionSelected($event)' ></app-showcase>
   </div>
 </div>
-
+</div>

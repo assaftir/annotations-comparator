@@ -31,6 +31,14 @@ export class ManuscriptService {
                   , catchError(this.handleError)
               );
     }
+    //MongoDB server must be running
+    public fetchFromDB(imageUrl) {
+        return this._http.get<any>(imageUrl)
+                   .pipe(
+                   tap(data => console.log('Fetching from MongoDB'))
+                   , catchError(this.handleError)
+               );
+     }
 
     private handleError(err: HttpErrorResponse) {
         console.log(err.message);

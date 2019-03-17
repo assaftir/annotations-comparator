@@ -1,9 +1,19 @@
+.manuscript-container{
+  z-index: -1;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 .flex-container {
   display: flex;
-  background-color: #b4b4b4;
+  background-color: rgb(60, 60, 60);
   width: 80%;
   height: 75%;
   margin: 100px;
+
 }
 
 .showcase{
@@ -14,6 +24,7 @@
   padding: 0px;
   padding-top: 0%;
   margin-left: auto;
+  
 }
 
 :host {
@@ -44,7 +55,7 @@
 h3{
   text-align:center;
   color: #b4b4b4;
-  font-size: 100px;
+  font-size: 60px;
 }
 
 h4{

@@ -7,6 +7,7 @@ import { version } from 'punycode';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import * as myGlobals from '../../../src/globals';
 
+var url = "mongodb://localhost:27017/";
 const xDelta = 30;
 const yDelta = 30;
 
@@ -237,11 +238,10 @@ compareDiff(originalJson : Manuscript[]) {
 
   ngOnInit(): void {
     this._manuscriptService.getManuscriptOfUser('./api/manuscripts2.json')
-              .subscribe(profileManuscripts => {
-                this.profileManuscripts = profileManuscripts;
-              },
-              error => this.errorMessage = <any>error);
-    
+      .subscribe(profileManuscripts => {
+        this.profileManuscripts = profileManuscripts;
+      },
+        error => this.errorMessage = <any>error);
   }
 
   onFileChanged(event) {
@@ -250,47 +250,56 @@ compareDiff(originalJson : Manuscript[]) {
     reader.readAsText(this.myfile);
     reader.onload = () => {
       console.log('file loaded');
-      this.profileManuscripts = JSON.parse(reader.result);
+      this.profileManuscripts = JSON.parse(reader.result).mydata;
       this.originalManuscripts = this.profileManuscripts;
     };
   }
 
-  comapreAnnotations(){
+  fetchFromDB() {
+    this._manuscriptService.fetchFromDB('http://localhost:27080/Annotations/Manuscripts/_find')
+    .subscribe(data => {
+      this.profileManuscripts = (data.results[0]).mydata;
+      this.originalManuscripts = this.profileManuscripts;
+    },
+      error => this.errorMessage = <any>error);
+  }
+
+  comapreAnnotations() {
     this.resetView();
     myGlobals.setDiffMode(false);
     myGlobals.setCompareMode(true);
     this.comapreAll(this.profileManuscripts);
   }
 
-  comapreVersions(){
+  comapreVersions() {
     this.resetView();
     myGlobals.setCompareMode(false);
     myGlobals.setDiffMode(true);
     this.compareDiff(this.profileManuscripts);
   }
 
-  resetView(){
+  resetView() {
     myGlobals.setCompareMode(false);
     myGlobals.setDiffMode(false);
     this.profileManuscripts = this.originalManuscripts;
   }
 
-  setChapter(chapter : number){
+  setChapter(chapter: number) {
     console.log('chap: ' + chapter);
     this.chapterNum = chapter - 1;
   }
 
-  setV1(v1 : number){
+  setV1(v1: number) {
     console.log('v1: ' + v1);
     this.v1 = v1;
   }
 
-  setV2(v2 : number){
+  setV2(v2: number) {
     console.log('v2: ' + v2);
     this.v2 = v2;
   }
 
-  setPage(page : number){
+  setPage(page: number) {
     console.log('page: ' + page);
     this.pageNum = page - 1;
   }

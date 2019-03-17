@@ -1,51 +1,50 @@
 <mat-sidenav-container class="container" >
-  <mat-sidenav  #sidenav mode="side" [(opened)]="opened">
-      <h3>Menu</h3>
-      <mat-divider></mat-divider>
-      <mat-button-toggle-group vertical
-                              #group="matButtonToggleGroup"
-                              name="fontStyle"
-                              aria-label="Font Style"
+    <mat-sidenav #sidenav mode="side" [(opened)]="opened">
+      <mat-button-toggle-group 
+                               #group="matButtonToggleGroup"
+                                name="fontStyle"
+                                aria-label="Font Style"
                               (change)="onValChange(group.value)"
-                              >
-          <!-- <input type="file" (change)="onFileChanged($event)"> -->
-          <input
-          style="display: none"
-          type="file" (change)="onFileChanged($event)"
-          #fileInput>
-          <h6>
-            <mat-button-toggle (click)="fileInput.click()">Select Annotations File</mat-button-toggle>
-            <mat-button-toggle (click)="comapreAnnotations()">Compare All Annotations</mat-button-toggle>
-            <mat-button-toggle (click)="resetView()">Load original annotations</mat-button-toggle>
-            <mat-button-toggle (click)="comapreVersions()">Compare Versions(diff)</mat-button-toggle>
-            <h4>Inputs</h4>
-            <input type="number" placeholder = 'Chapter number'  #chapter>
-            <button type="submit" (click) = 'setChapter(chapter.value)'>Set</button>
-            <br>
-            <input type="number" placeholder = 'Page number'  #page>
-            <button type="submit" (click) = 'setPage(page.value)'>Set</button>
-            <br>
-            <input type="number" placeholder = 'First version number'  #version1>
-            <button type="submit" (click) = 'setV1(version1.value)'>Set</button>
-            <br>
-            <input type="number" placeholder = 'Second version number'  #version2>
-            <button type="submit" (click) = 'setV2(version2.value)'>Set</button>
-            <br>
-            <h4>Browse Chapters</h4>
-            <mat-button-toggle value="underline" *ngFor="let manuscript of profileManuscripts ; index as i" value= {{i}}>{{manuscript.title}}</mat-button-toggle>
-          </h6>
-      </mat-button-toggle-group>
-  </mat-sidenav>
+                              style= "width: 100%; text-align: center;"
+                              
+        >
+            <!-- <input type="file" (change)="onFileChanged($event)"> -->
+            <input
+            style="display: none"
+            type="file" (change)="onFileChanged($event)"
+            #fileInput>
+            
+              <div class="actions" >
+              <mat-button-toggle (click)="fileInput.click()">Select Annotations File</mat-button-toggle>
+              <mat-button-toggle (click)="comapreAnnotations()">Compare All Annotations</mat-button-toggle>
+              <mat-button-toggle (click)="resetView()">Load original annotations</mat-button-toggle>
+              <mat-button-toggle (click)="comapreVersions()">Compare Versions(diff)</mat-button-toggle>
+              <mat-button-toggle (click)="fetchFromDB()">Fetch manuscripts from DB</mat-button-toggle>
+           <br>
+              <mat-button-toggle value="underline" *ngFor="let manuscript of profileManuscripts ; index as i" value= {{i}}>{{manuscript.title}}</mat-button-toggle>
+            </div>
+            </mat-button-toggle-group>
+              <br>
+              <div class="actions" >  
+                  <span>
+              <!-- <input type="number" placeholder = 'Chapter'  #chapter>
+              <input type="number" placeholder = 'Page'  #page>
+              <input type="number" placeholder = 'First version'  #version1>
+              <input type="number" placeholder = 'Second version'  #version2>
+              <button type="submit" (click) = "
+              setChapter(chapter.value);
+              setPage(page.value);
+              setV1(version1.value);
+              setV2(version2.value);
+              ">Set All</button> -->
+            </span>
+            <img src="/assets/Images/1.jpg" alt="not found"/>
 
-  <mat-sidenav-content>
-    <!-- <p><mat-checkbox [(ngModel)]="opened">sidenav.opened</mat-checkbox></p> -->
-    <button mat-button class="closeOpenButton" (click)="sidenav.toggle()">
-      <mat-icon *ngIf=opened>keyboard_arrow_left</mat-icon>
-      <mat-icon *ngIf=!opened>keyboard_arrow_right</mat-icon>
-    </button>
+          </div>
 
-    <app-manuscript-viewer  [manuscript]="profileManuscripts && profileManuscripts[_currentWorkingManuscript]"
-                            (saveToServerImagePage)='saveToServerImagePage($event)'></app-manuscript-viewer>
-
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    </mat-sidenav>
+    
+  
+      <app-manuscript-viewer  [manuscript]="profileManuscripts && profileManuscripts[_currentWorkingManuscript]"
+                              (saveToServerImagePage)='saveToServerImagePage($event)'></app-manuscript-viewer>
+  </mat-sidenav-container>

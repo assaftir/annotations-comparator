@@ -114,8 +114,8 @@ export class Drawer {
   static getColorForTextbox(textboxNote : TextboxNote){
     var textNote : string = textboxNote.textNote;
     var nums = textNote.split(/\W/).filter(i => parseInt(i) > -1).map(Number);
-    var max : number = this.findMax(nums);
-    var sum : number = this.arraySum(nums);
+    var max : Number = this.findMax(nums);
+    var sum : Number = this.arraySum(nums);
     var color : string = this.getColorByValue(max, sum)
     return color;
   }
@@ -130,15 +130,16 @@ export class Drawer {
   }
 
   static arraySum(arr : Number[]){
-    var sum : Number = 0;
+    var sum : number = 0;
     for (let i = 0 ; i < arr.length ; i++){
-      sum += arr[i];
+      sum += arr[i].valueOf();
+      /* sum. */
     }
-    return sum;
+    return Number(sum);
   }
 
-  static getColorByValue(max : number, sum : number){
-    const val = max / sum;
+  static getColorByValue(max : Number, sum : Number){
+    const val = max.valueOf() / sum.valueOf();
     if(sum == 1){
       return 'blue';
     }
@@ -349,21 +350,18 @@ export class Drawer {
       const metrics = ctx.measureText(testLine);
       const testWidth = metrics.width;
       if ((testWidth > maxWidth && n > 0) || words[n] == '-----') {
-        if(true || !LINES.includes(line)){
-          LINES.push(line);
-        }
-        if(words[n] == '-----')
+        LINES.push(line);
+        if(words[n] == '-----'){
           line = '';
-        else
+        } else {
           line = words[n] + ' ';
+        }
         backRectHeight += lineHeight;
       } else {
         line = testLine;
       }
     }
-    if(true || !LINES.includes(line)){
-      LINES.push(line);
-    }
+    LINES.push(line);
 
 
     // deal when the box is over the edges of the canvas
