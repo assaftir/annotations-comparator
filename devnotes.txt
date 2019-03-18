@@ -1,0 +1,33 @@
+Code Changelog:
+    TypeScript files:
+        sidenav-open-close.component.ts:
+            added:
+                1) class members
+                2) initJson(...) method - inits an empty Manuscript[] object for storing the result of compareAll(...) method.
+                3) isSameAnnotations(...) - checked if two annotations have same position on the manuscript(pixels-wise).
+                4) compareAll(...) - activated by the comapre all annotations button defined in the .html file.
+                5) comapreDiff(...) - activated by the comapre diff button, given user inputs, matches and diffs between annotations.
+                6) onFileChanged(...) - used for loading manuscripts from local drive.
+                6) fetchFromDB(...) - fetches user manuscripts from MongoDB.
+                7) resetView() - displaying the original user annotations.
+
+        services.imageService.ts:
+            added:
+                1) fetchFromDB(...) fetches user manuscripts from MongoDB.
+
+        Drawer.ts:
+            added:
+                1) getColorForTextbox(...) - given a textbox, returns the rectangle color for the comapre all mode.
+                2) splitLongString(...) - splits a string to match the borders.
+            edited:
+                1) drawNotationBox(...) - added the option for the diff mode.
+                2) drawImageAnnotationLayer(...) - added the option for the compare all mode.
+
+        globals.ts:
+            added for communicating between Drawer.ts and the sidenav component.
+
+    HTML + CSS files:
+        sidenav-open-close.component.html/.css:
+            added buttons for the described functionality in the user manual.
+    
+
