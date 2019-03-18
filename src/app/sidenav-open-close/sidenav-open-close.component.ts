@@ -7,7 +7,6 @@ import { version } from 'punycode';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import * as myGlobals from '../../../src/globals';
 
-var url = "mongodb://localhost:27017/";
 const xDelta = 30;
 const yDelta = 30;
 
@@ -58,9 +57,6 @@ export class SidenavOpenCloseComponent implements OnInit {
   }  
 
   public initJson(originalJson : Manuscript[]){
-/*     console.log(originalJson[0].title);
-    console.log(originalJson[1].title);
-    console.log("length: " + originalJson.length); */
     this.diffsJson = new Array<Manuscript>(originalJson.length);
     for(let i = 0 ; i < this.diffsJson.length ; i++){
       this.diffsJson[i] = new Manuscript();
@@ -83,17 +79,15 @@ export class SidenavOpenCloseComponent implements OnInit {
         }
       }
     }
-    //console.log(JSON.stringify(this.diffsJson));
   }
 
   public comapreAll(originalJson : Manuscript[]){
     this.initJson(originalJson);
     let unifiedNote = '';
-    //Chapters loop
+    //Combine matching annotation to a single textbox, separated by '-----'
     for (let chap = 0; chap < originalJson.length; chap++) {
       let chapterPages : ImagePage[] = originalJson[chap].pages;
       for(let page = 0 ; page < chapterPages.length ; page++){
-/*         console.log(chapterPages[page].imageUrl); */
         let pageVersions : ImageLayers[] = chapterPages[page].version;
         for(let v1 = 0 ; v1 < pageVersions.length ; v1++){
           if(pageVersions[v1] == undefined)
@@ -102,17 +96,14 @@ export class SidenavOpenCloseComponent implements OnInit {
           if(versionTextNotes == undefined)
             continue;
           for(let t1 = 0 ; t1 < versionTextNotes.length ; t1++){ //caught first textbox
-            unifiedNote = /* 'Annotator (' + v1 + ') - ' +  */versionTextNotes[t1].textNote + ' ----- ';
+            unifiedNote = versionTextNotes[t1].textNote + ' ----- ';
             for(let v2 = v1 + 1 ; v2 < pageVersions.length ; v2++){ //next verions loop
               if(pageVersions[v2] == undefined)
                 continue;
               let secondVersionTextNotes : TextboxNote[] = pageVersions[v2].annotationLayer;
               for(let t2 = 0 ; t2 < secondVersionTextNotes.length ; t2++){ //next version textNotes loop
                 if (this.isSameAnnotation(versionTextNotes[t1], secondVersionTextNotes[t2])){
-/*                   console.log('match!');
-                  console.log(versionTextNotes[t1].textNote);
-                  console.log(secondVersionTextNotes[t2].textNote); */
-                  unifiedNote += /* 'Annotator (' + v2 + ') - ' +  */secondVersionTextNotes[t2].textNote + ' ----- ';
+                  unifiedNote += secondVersionTextNotes[t2].textNote + ' ----- ';
                 }
               }
             }
@@ -125,14 +116,12 @@ export class SidenavOpenCloseComponent implements OnInit {
                                 versionTextNotes[t1].height,
                                 versionTextNotes[t1].width,
                                 unifiedNote));
-              /* console.log('unified: ' + unifiedNote); */
             }
           }
         }
       }
     }
-
-
+    //Counts and marks the matching annotations of a given textbox.
     for (let chap = 0; chap < this.diffsJson.length; chap++) {
       let chapterPages : ImagePage[] = this.diffsJson[chap].pages;
       for(let page = 0 ; page < chapterPages.length ; page++){
@@ -175,11 +164,7 @@ export class SidenavOpenCloseComponent implements OnInit {
         }
       }
     }
-
-
-
     this.profileManuscripts = this.diffsJson;
-    /* console.log(JSON.stringify(this.diffsJson)); */
   }
 
 alreadyContains(textBoxes : TextboxNote[], sp : Pixel, height : number, width : number){

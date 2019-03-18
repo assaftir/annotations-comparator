@@ -4,7 +4,6 @@ import { SystemState } from './enums';
 import * as Diff from '../../../../../node_modules/diff';
 import * as myGlobals from '../../../../../src/globals';
 import { SidenavOpenCloseComponent } from '../../sidenav-open-close.component';
-/* const colors = require('colors'); */
 export class Drawer {
 
   static drawPointerCanvas(ctx, mt: MatrixTransformer,  x: number, y: number , systemState: SystemState) {
@@ -34,15 +33,6 @@ export class Drawer {
         ctx.fill();
         break;
      }
-    //  case SystemState.AddPolyline: {
-    //   break;
-    //   }
-    //   case SystemState.DeleteMode: {
-    //     ctx.font =  '40px Material Icons';
-    //     ctx.fillStyle = 'red';
-    //     ctx.fillText(String.fromCharCode(0xE872), x , y);
-    //    break;
-    //  }
       default: {
         ctx.beginPath();
         ctx.lineWidth = 5;
@@ -96,7 +86,6 @@ export class Drawer {
     annotationLayer.forEach(textboxNote => {
         ctx.beginPath();
         ctx.lineWidth = '1';
-        /* console.log('note: ' + textboxNote.textNote); */
         if(myGlobals.compareMode){
           ctx.fillStyle = this.getColorForTextbox(textboxNote);
         } else{
@@ -432,9 +421,6 @@ export class Drawer {
     ctx.stroke();
     ctx.fill();
     ctx.restore();
-    // draw lines
-/*     console.log('words[0]: ' + LINES[0]);
-    console.log('words[1]: ' + LINES[1]); */
     let result = Diff.diffWords(LINES[0], LINES[1]);
     let nextX = x;
     let nextY = y + lineHeight;
@@ -442,10 +428,8 @@ export class Drawer {
     var space = 0;
     for(let i = 0 ; i < result.length; i++){
       ctx.fillStyle = this.getPartColor(result[i]);
-/*       console.log("fillstyle: " + ctx.fillStyle + ", lastColor: " + lastColor); */
       if(lastColor != undefined && (lastColor == 'green' && (this.getPartColor(result[i]) == 'red') || this.getPartColor(result[i]) == 'black') || (lastColor == 'red' && this.getPartColor(result[i]) == 'green')){
         space = ctx.measureText(" ").width;
-/*         console.log("GOT IT"); */
       } else {
         space = 0;
       }
@@ -458,10 +442,6 @@ export class Drawer {
         }
       } else {
         ctx.fillText(result[i].value, nextX + space, nextY);
-/*         console.log("space: " + space);
-        console.log('part value: ' + result[i].value);
-        console.log('next X: ' + nextX);
-        console.log('-----'); */
         nextX += (ctx.measureText(result[i].value).width);
         if(nextX - x > backRectWidth){
           nextX = x;
